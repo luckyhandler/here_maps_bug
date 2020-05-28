@@ -72,11 +72,14 @@ class MapState extends State<MapWidget> {
   @override
   void initState() {
     super.initState();
+    showInitialPosition();
     _subscription =
         _locationProvider.getPositionStream().listen((Position position) {
-      setState(() {
-        this._position = position;
-      });
+      if (position != null) {
+        setState(() {
+          _position = position;
+        });
+      }
     });
   }
 
@@ -128,6 +131,15 @@ class MapState extends State<MapWidget> {
 
     _mapController.camera
         .lookAtPointWithDistance(coordinates, _distanceInMetersFromPosition);
+  }
+
+  void showInitialPosition() async {
+    Position position = await _locationProvider.getLastKnownPosition();
+    if (position != null) {
+      setState(() {
+        _position = position;
+      });
+    }
   }
 }
 
